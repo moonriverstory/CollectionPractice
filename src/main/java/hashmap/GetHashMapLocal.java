@@ -2,7 +2,7 @@ package hashmap;
 
 public class GetHashMapLocal {
 
-    private static int CAPACITY = 16;
+    private static final int CAPACITY = 16;
 
     /**
      * 最大容量
@@ -20,7 +20,22 @@ public class GetHashMapLocal {
         int index = getIndexByHashCode(hash, capacity);
         System.out.println("index: " + index);
 
+        System.out.println("calculate index via getHashMapIndex: " + getHashMapIndex(key));
     }
+
+    /**
+     * 通过给定的key获得hashmap的index
+     *
+     * @param key
+     * @return
+     */
+    public static int getHashMapIndex(String key) {
+        int hash = getHashMapHash(key);
+        int index = getIndexByHashCode(hash, CAPACITY);
+        return index;
+    }
+
+
     /**
      h1 hashcode: 96354
      h2 hashcode: 96354
@@ -55,6 +70,14 @@ public class GetHashMapLocal {
 //            return 0;
 //        }
 //    }
+
+    /**
+     * 根据hash值取key在hashmap中的index，就是hash除以hashmap的容量，取余
+     *
+     * @param hashCode
+     * @param length
+     * @return
+     */
     public static int getIndexByHashCode(int hashCode, int length) {
         return hashCode & (length - 1);
     }
@@ -72,12 +95,12 @@ public class GetHashMapLocal {
 
             for (int i = 0; i < val.length; i++) {
                 hash = 31 * hash + val[i];//int+char强转成int
-                //
             }
         }
         return hash;
     }
 
+    //这步计算后没变化，忽略吧=。=
     public static int roundUpToPowerOf2(int number) {
         return number >= MAXIMUM_CAPACITY ? MAXIMUM_CAPACITY : (number > 1) ? Integer.highestOneBit((number - 1) << 1) : 1;
     }
@@ -91,8 +114,15 @@ public class GetHashMapLocal {
      */
     public static int getHashMapHash(Object key) {
         int hash = 0;
-        int keyHash = key.hashCode();
-        hash ^= keyHash;
+        int keyHash;
+        if (key instanceof String) {
+            //一般hashmap的key都是string，初始取hash就是按照string取hash的方法
+            keyHash = getStringHashCode(String.valueOf(key));
+        } else {
+            keyHash = key.hashCode();
+        }
+        //然后再按hashmap的特有方法，无符号右移+异或，计算出hashmap中key的hash值
+        hash ^= keyHash;//0和任何数异或都等于那个数的原值，所以这步就是赋值
         hash ^= (hash >>> 20) ^ (hash >>> 12);
         return hash ^ (hash >>> 7) ^ (hash >>> 4);
     }

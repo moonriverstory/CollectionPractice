@@ -110,7 +110,7 @@ public class BinaryCalculateSimulate {
         result.append(highPositionBinary);
         //低位按位异或
         for (int i = 0; i < oxrBin1.length(); i++) {
-            //如果两个值不相同，则异或结果为1。如果两个值相同，异或结果为0。
+            //如果两个值相同，异或结果为0；如果两个值不相同，则异或结果为1。
             if (oxrBin1.charAt(i) == oxrBin2.charAt(i)) {
                 result.append("0");
             } else {
