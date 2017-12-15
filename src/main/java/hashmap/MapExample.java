@@ -19,6 +19,13 @@ public class MapExample {
         nameAgeMap.put("Wang", 28);
         nameAgeMap.put("BB", 8);
         nameAgeMap.put("Aa", 7);
+        nameAgeMap.put("Zhang2", 24);
+        nameAgeMap.put("Eric2", 20);
+        nameAgeMap.put("John2", 21);
+        nameAgeMap.put("LiLei2", 19);
+        nameAgeMap.put("Wang2", 28);
+        nameAgeMap.put("BB2", 8);
+        nameAgeMap.put("Aa2", 7);
         System.out.println(nameAgeMap);
         /**
          hashcode: 2112

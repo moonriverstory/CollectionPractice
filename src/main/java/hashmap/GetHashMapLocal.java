@@ -2,7 +2,9 @@ package hashmap;
 
 public class GetHashMapLocal {
 
-    private static final int CAPACITY = 16;
+    private static final int INITIAL_CAPACITY = 16;
+
+    private static final float DEFAULT_FACTOR = 0.75f;
 
     /**
      * 最大容量
@@ -20,18 +22,41 @@ public class GetHashMapLocal {
         int index = getIndexByHashCode(hash, capacity);
         System.out.println("index: " + index);
 
-        System.out.println("calculate index via getHashMapIndex: " + getHashMapIndex(key));
+        System.out.println("calculate index via getHashMapIndexSimplest: " + getHashMapIndexSimplest(key));
+
+        System.out.println("calculate index via getHashMapIndex: key = " + key + " , size = 5 , loadFactor = default . Index is: " + getHashMapIndex(key, 5, 0));
+
+        System.out.println("calculate index via getHashMapIndex: key = " + key + " , size = 14 , loadFactor = default . Index is: " + getHashMapIndex(key, 14, 0));
+
+        System.out.println("calculate index via getHashMapIndex: key = " + key + " , size = 14 , loadFactor = 0.9 . Index is: " + getHashMapIndex(key, 14, 0.9f));
+
     }
 
     /**
      * 通过给定的key获得hashmap的index
+     * 最简单的，只有初始size的方式
      *
      * @param key
      * @return
      */
-    public static int getHashMapIndex(String key) {
+    public static int getHashMapIndexSimplest(String key) {
         int hash = getHashMapHash(key);
-        int index = getIndexByHashCode(hash, CAPACITY);
+        int index = getIndexByHashCode(hash, INITIAL_CAPACITY);
+        return index;
+    }
+
+    /**
+     * 比较正式的模拟，通过key，size和loadfactor获得hashmap的index
+     *
+     * @param key
+     * @param size
+     * @param loadFactor
+     * @return
+     */
+    public static int getHashMapIndex(String key, int size, float loadFactor) {
+        int hash = getHashMapHash(key);
+        int capacity = getCapacityFromSize(size, loadFactor);
+        int index = getIndexByHashCode(hash, capacity);
         return index;
     }
 
@@ -132,14 +157,41 @@ public class GetHashMapLocal {
         return binary;
     }
 
+    /**
+     * 获得容量阈值
+     *
+     * @param capacity
+     * @param loadFactor
+     * @return
+     */
+    public static int getThreshold(int capacity, float loadFactor) {
+        //阈值=容量*加载因子
+        int threshold = (int) Math.min(capacity * loadFactor, MAXIMUM_CAPACITY + 1);
+        return threshold;
+    }
 
-//    public static int jdk1_5_objectHash(Object x) {
-//        int h = x.hashCode();
-//        h += ~(h << 9);
-//        h ^= (h >>> 14);
-//        h += (h << 4);
-//        h ^= (h >>> 10);
-//        return h;
-//    }
+    /**
+     * 根据size和加载因子（容积率）获得table[]数组的当前容量
+     *
+     * @param size
+     * @param loadFactor
+     * @return
+     */
+    public static int getCapacityFromSize(int size, float loadFactor) {
+        if (loadFactor <= 0) {
+            loadFactor = DEFAULT_FACTOR;
+        }
+        int nowCapacity = INITIAL_CAPACITY;
+        int threshold = getThreshold(nowCapacity, loadFactor);
+        while (size > threshold) {
+            //如果map大小大于阈值，则扩容
+            //新容量=当前容量*2
+            nowCapacity = nowCapacity * 2;
+            //重新计算阈值
+            threshold = getThreshold(nowCapacity, loadFactor);
+        }
+        return nowCapacity;
+    }
+
 
 }
