@@ -15,6 +15,12 @@ public class LinkedHashSetTest {
         lset.add("生物");
         lset.add("化学");
         lset.add("物理");
+
+        //因为hashset把里面的值，存为hashmap中的key
+        //这样，里面的值就不会重复了；如果重复add相同的值，则旧值覆盖新值，而不会报错=。= OK~
+        lset.add("语文");
+        lset.add("语文");
+        lset.add("语文");
         for (String str : lset) {
             System.out.println(str);
         }
